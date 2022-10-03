@@ -11,9 +11,9 @@ import java.util.Map;
 
 @RequiredArgsConstructor
 @Service
-public class ExchangeDataFetchService {
+public class ExchangeRateFetchService {
     private static final String EURO_BASE_CURRENCY = "EUR";
-    private final ExternalExchangeRateServiceAdapterImpl exchangeRateService;
+    private final ExternalExchangeRateServiceAdapterImpl exchangeRateServiceAdapter;
 
 
     public BigDecimal getExchangeRate(String source, String target) {
@@ -21,7 +21,7 @@ public class ExchangeDataFetchService {
             return BigDecimal.ONE;
         } else {
             final var exchangeRatesForEuro =
-                    exchangeRateService.getLatestExchangeRates().getRates();
+                    exchangeRateServiceAdapter.getLatestExchangeRates().getRates();
 
             if (EURO_BASE_CURRENCY.equalsIgnoreCase(source)) {
                 return exchangeRatesForEuro.get(target);
@@ -35,7 +35,7 @@ public class ExchangeDataFetchService {
 
     public ExchangeRateDto getAllExchangeRates(String source) {
         return EURO_BASE_CURRENCY.equalsIgnoreCase(source)
-                ? exchangeRateService.getLatestExchangeRates()
+                ? exchangeRateServiceAdapter.getLatestExchangeRates()
                 : convertToSourceExchangeRate(source);
     }
 
@@ -43,7 +43,7 @@ public class ExchangeDataFetchService {
         Map<String, BigDecimal> exchangeRatesForSource = new HashMap<>();
 
         final var latestExchangeRatesForEuro =
-                exchangeRateService.getLatestExchangeRates().getRates();
+                exchangeRateServiceAdapter.getLatestExchangeRates().getRates();
         final var sourceExchangeForEuro = latestExchangeRatesForEuro.get(source);
 
         latestExchangeRatesForEuro

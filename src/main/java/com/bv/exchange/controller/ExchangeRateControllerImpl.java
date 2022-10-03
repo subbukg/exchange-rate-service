@@ -22,8 +22,8 @@ public class ExchangeRateControllerImpl implements ExchangeRateController {
     }
 
     public ResponseEntity<ValueConversionResponse> getValueConversion(
-            String source, BigDecimal value, List<String> targetCurrencies) {
+            String source, BigDecimal value, List<String> currencies) {
         return ResponseEntity.ok(
-                exchangeRateService.getValueConversion(source, value, targetCurrencies));
+                exchangeRateService.getValueConversion(source, value, currencies));
     }
 }

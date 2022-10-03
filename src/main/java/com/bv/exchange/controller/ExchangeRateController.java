@@ -12,13 +12,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotEmpty;
 import java.math.BigDecimal;
 import java.util.List;
+
 @Validated
 @RequestMapping(path = "/api/v1/currency-exchange/")
 public interface ExchangeRateController {
@@ -33,6 +34,9 @@ public interface ExchangeRateController {
             responseCode = "200",
             description = "Successful operation",
             content = @Content(schema = @Schema(implementation = ExchangeRateResponse.class)))
+    @ApiResponse(responseCode = "503", description = "External exchange rate server unavailable.")
+    @ApiResponse(responseCode = "422", description = "Input validation error occurred.")
+    @ApiResponse(responseCode = "500", description = "Internal Server error.")
     @GetMapping(
             value = {"from/{source}", "from/{source}/to/{target}"},
             consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -49,9 +53,13 @@ public interface ExchangeRateController {
             responseCode = "200",
             description = "Successful operation",
             content = @Content(schema = @Schema(implementation = ValueConversionResponse.class)))
+    @ApiResponse(responseCode = "503", description = "External exchange rate server unavailable.")
+    @ApiResponse(responseCode = "422", description = "Input validation error occurred.")
+    @ApiResponse(responseCode = "500", description = "Internal Server error.")
     @GetMapping("from/{source}/value/{value}")
     ResponseEntity<ValueConversionResponse> getValueConversion(
             @ValidCurrencyCode @PathVariable String source,
             @DecimalMin(value = "0.0", inclusive = false) @PathVariable BigDecimal value,
-            @NotEmpty @RequestBody List<@ValidCurrencyCode String> currencies);
+            @NotEmpty(message = "at least one currency must be specified!") @RequestParam
+                    List<@ValidCurrencyCode String> currencies);
 }
