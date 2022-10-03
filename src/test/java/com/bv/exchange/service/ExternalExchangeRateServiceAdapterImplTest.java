@@ -30,6 +30,8 @@ class ExternalExchangeRateServiceAdapterImplTest {
         final var sourceUrl = "https://api.exchangerate.host/latest";
         Map<String, String> uriVariables = new HashMap<>();
         uriVariables.put("base", "EUR");
+        uriVariables.put("places", "2");
+
         final var sourceCurrency = "EUR";
         final var exchangeRateDto =
                 ExchangeRateDto.builder()
