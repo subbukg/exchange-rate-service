@@ -1,10 +1,6 @@
 spring:
   application:
     name: exchange-rate-service
-  cache:
-    cache-names: exchangeRate
-    caffeine:
-      spec: expireAfterAccess=60s
 
 management:
   endpoint:

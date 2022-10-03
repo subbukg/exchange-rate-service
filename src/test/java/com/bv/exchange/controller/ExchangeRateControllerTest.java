@@ -32,7 +32,7 @@ class ExchangeRateControllerTest {
     }
 
     @Test
-    void getExchangeRate_whenValidSourceIsGiven() {
+    void getExchangeRate_WhenValidSourceIsGiven() {
         final var source = "EUR";
         final var exchangeRateResponse =
                 ExchangeRateResponse.builder()
@@ -53,7 +53,7 @@ class ExchangeRateControllerTest {
     }
 
     @Test
-    void getExchangeRate_whenValidSourceAndTargetIsGiven() {
+    void getExchangeRate_WhenValidSourceAndTargetIsGiven() {
         final var source = "EUR";
         final var target = "USD";
         final var exchangeRateResponse =
@@ -74,7 +74,7 @@ class ExchangeRateControllerTest {
     }
 
     @Test
-    void getExchangeRate_whenInvalidSourceCurrencyIsGiven() {
+    void getExchangeRate_WhenInvalidSourceCurrencyIsGiven() {
         final var source = "XYZ"; // invalid currency
         final var exchangeRateResponse =
                 ExchangeRateResponse.builder()
@@ -94,7 +94,7 @@ class ExchangeRateControllerTest {
     }
 
     @Test
-    void getValueConversion_whenValidSourceCurrencyIsGiven() {
+    void getValueConversion_WhenValidSourceCurrencyIsGiven() {
         final var source = "EUR";
         final var target = "INR";
         final var currencies = List.of(target);

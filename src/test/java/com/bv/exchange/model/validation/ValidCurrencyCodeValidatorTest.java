@@ -14,21 +14,21 @@ class ValidCurrencyCodeValidatorTest {
             mock(ConstraintValidatorContext.class);
 
     @Test
-    void testValidateCurrencyCodeWithNullCurrencyCode() {
+    void testValidateCurrencyCode_WithNullCurrencyCode() {
         ValidCurrencyCodeValidator validator = new ValidCurrencyCodeValidator(Set.of("USD"));
         // assert true because, this field wasn't set so no need to validate
         Assertions.assertTrue(validator.isValid(null, constraintValidatorContext));
     }
 
     @Test
-    void testValidateCurrencyCodeWithUSDCurrencyCode() {
+    void testValidateCurrencyCode_WithUSDCurrencyCode() {
         ValidCurrencyCodeValidator validator = new ValidCurrencyCodeValidator(Set.of("USD"));
         // assert true because, this currency code exists
         Assertions.assertTrue(validator.isValid("USD", constraintValidatorContext));
     }
 
     @Test
-    void testValidateCurrencyCodeWithInvalidCurrencyCode() {
+    void testValidateCurrencyCode_WithInvalidCurrencyCode() {
         ValidCurrencyCodeValidator validator =
                 new ValidCurrencyCodeValidator(Set.of("USD", "EUR", "INR"));
         // assert false because, the currency code specified is invalid

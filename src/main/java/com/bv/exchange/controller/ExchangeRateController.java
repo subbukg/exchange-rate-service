@@ -4,10 +4,11 @@ import com.bv.exchange.model.ExchangeRateResponse;
 import com.bv.exchange.model.ValueConversionResponse;
 import com.bv.exchange.model.validation.ValidCurrencyCode;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,10 +26,8 @@ import java.util.List;
 public interface ExchangeRateController {
 
     @Operation(
-            summary =
-                    "For a given source currency, get a target currency exchange rate (if specified) or all the currency exchange rate.",
-            description =
-                    "Returns the currency exchange rate of a target currency (if available) wrt given source currency or else all the other currency exchange rates are returned.",
+            summary = "For a given source currency, get the target currency exchange rate.",
+            description = "Returns the currency exchange rate of a target currency.",
             tags = {"exchange-rate"})
     @ApiResponse(
             responseCode = "200",
@@ -37,12 +36,26 @@ public interface ExchangeRateController {
     @ApiResponse(responseCode = "503", description = "External exchange rate server unavailable.")
     @ApiResponse(responseCode = "422", description = "Input validation error occurred.")
     @ApiResponse(responseCode = "500", description = "Internal Server error.")
-    @GetMapping(
-            value = {"from/{source}", "from/{source}/to/{target}"},
-            consumes = MediaType.APPLICATION_JSON_VALUE)
-    ResponseEntity<ExchangeRateResponse> getExchangeRate(
+    @GetMapping(value = "from/{source}/to/{target}")
+    ResponseEntity<ExchangeRateResponse> getExchangeRateForTargetCurrency(
             @ValidCurrencyCode @PathVariable String source,
-            @ValidCurrencyCode @PathVariable(required = false) String target);
+            @ValidCurrencyCode @PathVariable String target);
+
+    @Operation(
+            summary = "For a given source currency, get all the currency exchange rates.",
+            description =
+                    "For a source currency, returns the exchange rates of all the other currencies.",
+            tags = {"exchange-rate"})
+    @ApiResponse(
+            responseCode = "200",
+            description = "Successful operation",
+            content = @Content(schema = @Schema(implementation = ExchangeRateResponse.class)))
+    @ApiResponse(responseCode = "503", description = "External exchange rate server unavailable.")
+    @ApiResponse(responseCode = "422", description = "Input validation error occurred.")
+    @ApiResponse(responseCode = "500", description = "Internal Server error.")
+    @GetMapping(value = "from/{source}")
+    ResponseEntity<ExchangeRateResponse> getExchangeRates(
+            @ValidCurrencyCode @PathVariable String source);
 
     @Operation(
             summary = "Get value conversion from source currency to target currency(ies).",
@@ -60,6 +73,10 @@ public interface ExchangeRateController {
     ResponseEntity<ValueConversionResponse> getValueConversion(
             @ValidCurrencyCode @PathVariable String source,
             @DecimalMin(value = "0.0", inclusive = false) @PathVariable BigDecimal value,
-            @NotEmpty(message = "at least one currency must be specified!") @RequestParam
+            @Parameter(
+                            in = ParameterIn.QUERY,
+                            description = "The target currency for the value conversion.")
+                    @NotEmpty(message = "at least one currency must be specified!")
+                    @RequestParam
                     List<@ValidCurrencyCode String> currencies);
 }

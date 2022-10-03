@@ -22,7 +22,7 @@ class GlobalExceptionHandlerTest {
     }
 
     @Test
-    void testHandleConstraintViolation() {
+    void testHandle_ConstraintViolation() {
         final var violation =
                 ConstraintViolationImpl.forParameterValidation(
                         "Parameter cannot be empty",
@@ -48,7 +48,7 @@ class GlobalExceptionHandlerTest {
     }
 
     @Test
-    void testHandleAllUncaughtException() {
+    void testHandle_AllUncaughtException() {
         final var exception = new RuntimeException("test");
 
         final var res =

@@ -21,10 +21,11 @@ public class ExternalExchangeRateServiceAdapterImpl implements ExternalExchangeR
     public ExchangeRateDto getLatestExchangeRates() throws ExternalServiceNotRespondingException {
         final var base = "base";
         final var sourceUrl = "https://api.exchangerate.host/latest";
-
         try {
             Map<String, String> uriVariables = new HashMap<>();
-            uriVariables.put(base, EURO_BASE_CURRENCY);
+            uriVariables.put(
+                    base,
+                    EURO_BASE_CURRENCY); // this part could be generalized to use diff base currency
             return restTemplate.getForObject(sourceUrl, ExchangeRateDto.class, uriVariables);
 
         } catch (Exception exception) {

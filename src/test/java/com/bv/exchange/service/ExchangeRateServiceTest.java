@@ -21,7 +21,7 @@ class ExchangeRateServiceTest {
     @InjectMocks private ExchangeRateService exchangeRateService;
 
     @Test
-    void testGetExchangeRateForASourceCurrency() {
+    void testGetExchangeRate_ForASourceCurrency() {
         // arrange
         final var sourceCurrency = "EUR";
         final var exchangeRateDto =
@@ -48,7 +48,7 @@ class ExchangeRateServiceTest {
     }
 
     @Test
-    void testGetExchangeRateForSourceAndTargetCurrency() {
+    void testGetExchangeRate_ForSourceAndTargetCurrency() {
         // arrange
         final var sourceCurrency = "EUR";
         final var targetCurrency = "USD";
@@ -66,7 +66,7 @@ class ExchangeRateServiceTest {
     }
 
     @Test
-    void testGetExchangeRateForIdenticalSourceAndTargetCurrency() {
+    void testGetExchangeRate_ForIdentical_SourceAndTargetCurrency() {
         // arrange
         final var sourceCurrency = "EUR";
         final var targetCurrency = "EUR";
@@ -79,7 +79,7 @@ class ExchangeRateServiceTest {
     }
 
     @Test
-    void testGetValueConversionForASingleTargetCurrency() {
+    void testGetValueConversionFor_ASingleTargetCurrency() {
         // arrange
         final var sourceCurrency = "EUR";
         final var value = BigDecimal.valueOf(2000);
@@ -98,7 +98,7 @@ class ExchangeRateServiceTest {
     }
 
     @Test
-    void testGetValueConversionForAListOfTargetCurrencies() {
+    void testGetValueConversionFor_AListOfTargetCurrencies() {
         // arrange
         final var sourceCurrency = "EUR";
         final var value = BigDecimal.valueOf(2000);
