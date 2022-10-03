@@ -8,6 +8,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -34,7 +35,7 @@ class ExchangeRateFetchServiceTest {
         final var exchangeRate =
                 exchangeRateFetchService.getExchangeRate(sourceCurrency, targetCurrency);
         // assert
-        assertThat(exchangeRate).isEqualTo(BigDecimal.valueOf(0.90));
+        assertThat(exchangeRate).isEqualTo(BigDecimal.valueOf(0.90).setScale(2, RoundingMode.HALF_UP));
         verify(exchangeRateServiceAdapter).getLatestExchangeRates();
     }
 
@@ -59,7 +60,7 @@ class ExchangeRateFetchServiceTest {
         final var exchangeRate =
                 exchangeRateFetchService.getExchangeRate(sourceCurrency, targetCurrency);
         // assert
-        assertThat(exchangeRate).isEqualTo(BigDecimal.valueOf(88.9));
+        assertThat(exchangeRate).isEqualTo(BigDecimal.valueOf(88.89));
         verify(exchangeRateServiceAdapter).getLatestExchangeRates();
     }
 
@@ -122,7 +123,7 @@ class ExchangeRateFetchServiceTest {
         // assert
         assertThat(exchangeRate.getBase()).isEqualTo(sourceCurrency);
         assertThat(exchangeRate.getRates())
-                .containsEntry("INR", BigDecimal.valueOf(88.9)); // converted value
+                .containsEntry("INR", BigDecimal.valueOf(88.89)); // converted value
         verify(exchangeRateServiceAdapter).getLatestExchangeRates();
     }
 }

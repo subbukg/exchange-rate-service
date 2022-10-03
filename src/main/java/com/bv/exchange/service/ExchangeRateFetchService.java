@@ -13,8 +13,8 @@ import java.util.Map;
 @Service
 public class ExchangeRateFetchService {
     private static final String EURO_BASE_CURRENCY = "EUR";
+    private static final int SCALE = 2;
     private final ExternalExchangeRateServiceAdapterImpl exchangeRateServiceAdapter;
-
 
     public BigDecimal getExchangeRate(String source, String target) {
         if (source.equalsIgnoreCase(target)) {
@@ -24,11 +24,12 @@ public class ExchangeRateFetchService {
                     exchangeRateServiceAdapter.getLatestExchangeRates().getRates();
 
             if (EURO_BASE_CURRENCY.equalsIgnoreCase(source)) {
-                return exchangeRatesForEuro.get(target);
+                return exchangeRatesForEuro.get(target).setScale(SCALE, RoundingMode.HALF_UP);
             } else {
                 final var sourceExchangeForBase = exchangeRatesForEuro.get(source);
                 final var targetExchangeForBase = exchangeRatesForEuro.get(target);
-                return targetExchangeForBase.divide(sourceExchangeForBase, RoundingMode.HALF_DOWN);
+                return targetExchangeForBase.setScale(SCALE, RoundingMode.HALF_UP).divide(
+                        sourceExchangeForBase, RoundingMode.HALF_UP);
             }
         }
     }
@@ -54,10 +55,9 @@ public class ExchangeRateFetchService {
                                     latestExchangeRatesForEuro.get(currency);
                             exchangeRatesForSource.put(
                                     currency,
-                                    currencyExchangeForEuro.divide(
-                                            sourceExchangeForEuro, RoundingMode.HALF_DOWN));
+                                    currencyExchangeForEuro.setScale(SCALE, RoundingMode.HALF_UP).divide(
+                                            sourceExchangeForEuro, RoundingMode.HALF_UP));
                         });
         return ExchangeRateDto.builder().base(source).rates(exchangeRatesForSource).build();
     }
-
 }
