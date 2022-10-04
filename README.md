@@ -3,9 +3,10 @@
 Service that fetches the exchange rate from external service and uses them for currency conversion calculations.
 
 ## Assumptions:
-  * Considering that external api calls are expensive and to minimize the external calls, the base currency for all the operations in this service is set to EUR ie., `base = EUR`.
-   However, this functionality could be altered or extended by setting a base currency other than EUR, if required. 
-  * Caffeine Cache is used in this service. 
+  * considering that external api calls are expensive and to minimize the external calls, the base currency for all the operations in this service is set to EUR ie., `base = EUR`.
+   However, this functionality could be altered or extended by setting a base currency other than EUR, if required.
+  * while fetching the exchange rate from the external service, the `scale` is set to ``scale=4``, Exchange rate for any single currency / for conversion value it is set to `scale=2`. 
+  * caffeine Cache is used in this service. 
   
 ### Setup
 

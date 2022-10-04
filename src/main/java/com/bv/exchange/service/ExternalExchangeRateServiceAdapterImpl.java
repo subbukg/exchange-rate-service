@@ -19,12 +19,14 @@ public class ExternalExchangeRateServiceAdapterImpl implements ExternalExchangeR
     @Cacheable("exchangeRate")
     @Override
     public ExchangeRateDto getLatestExchangeRates() throws ExternalServiceNotRespondingException {
-        final var sourceUrl = "https://api.exchangerate.host/latest";
+        final var sourceUrl =
+                "https://api.exchangerate.host/latest?base={baseValue}&places={placeValue}";
         try {
             Map<String, String> uriVariables = new HashMap<>();
             uriVariables.put(
-                    "base", EURO_BASE_CURRENCY); // could be generalized to use diff base currency
-            uriVariables.put("places", "2");
+                    "baseValue",
+                    EURO_BASE_CURRENCY);
+            uriVariables.put("placeValue", "4");
             return restTemplate.getForObject(sourceUrl, ExchangeRateDto.class, uriVariables);
 
         } catch (Exception exception) {

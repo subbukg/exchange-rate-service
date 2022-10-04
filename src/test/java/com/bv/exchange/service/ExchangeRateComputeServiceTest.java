@@ -15,9 +15,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class ExchangeRateFetchServiceTest {
+class ExchangeRateComputeServiceTest {
     @Mock private ExternalExchangeRateServiceAdapterImpl exchangeRateServiceAdapter;
-    @InjectMocks private ExchangeRateFetchService exchangeRateFetchService;
+    @InjectMocks private ExchangeRateComputeService exchangeRateComputeService;
 
     @Test
     void testGetExchangeRate_ForASourceAndTargetCurrency_WithEuroAsBaseCurrency() {
@@ -33,7 +33,7 @@ class ExchangeRateFetchServiceTest {
                                 .build());
         // act
         final var exchangeRate =
-                exchangeRateFetchService.getExchangeRate(sourceCurrency, targetCurrency);
+                exchangeRateComputeService.getExchangeRate(sourceCurrency, targetCurrency);
         // assert
         assertThat(exchangeRate).isEqualTo(BigDecimal.valueOf(0.90).setScale(2, RoundingMode.HALF_UP));
         verify(exchangeRateServiceAdapter).getLatestExchangeRates();
@@ -52,15 +52,15 @@ class ExchangeRateFetchServiceTest {
                                 .rates(
                                         Map.of(
                                                 "INR",
-                                                BigDecimal.valueOf(80.0),
+                                                BigDecimal.valueOf(8000,2),
                                                 "USD",
-                                                BigDecimal.valueOf(0.90)))
+                                                BigDecimal.valueOf(90, 2)))
                                 .build());
         // act
         final var exchangeRate =
-                exchangeRateFetchService.getExchangeRate(sourceCurrency, targetCurrency);
+                exchangeRateComputeService.getExchangeRate(sourceCurrency, targetCurrency);
         // assert
-        assertThat(exchangeRate).isEqualTo(BigDecimal.valueOf(88.89));
+        assertThat(exchangeRate).isEqualTo(BigDecimal.valueOf(8889, 2));
         verify(exchangeRateServiceAdapter).getLatestExchangeRates();
     }
 
@@ -72,7 +72,7 @@ class ExchangeRateFetchServiceTest {
 
         // act
         final var exchangeRate =
-                exchangeRateFetchService.getExchangeRate(sourceCurrency, targetCurrency);
+                exchangeRateComputeService.getExchangeRate(sourceCurrency, targetCurrency);
         // assert
         assertThat(exchangeRate).isEqualTo(BigDecimal.ONE);
         verifyNoInteractions(exchangeRateServiceAdapter);
@@ -90,15 +90,15 @@ class ExchangeRateFetchServiceTest {
                                 .rates(
                                         Map.of(
                                                 "INR",
-                                                BigDecimal.valueOf(80.0),
+                                                BigDecimal.valueOf(80),
                                                 "USD",
-                                                BigDecimal.valueOf(0.90)))
+                                                BigDecimal.valueOf(90, 2)))
                                 .build());
         // act
-        final var exchangeRate = exchangeRateFetchService.getAllExchangeRates(sourceCurrency);
+        final var exchangeRate = exchangeRateComputeService.getAllExchangeRates(sourceCurrency);
         // assert
         assertThat(exchangeRate.getBase()).isEqualTo(sourceCurrency);
-        assertThat(exchangeRate.getRates()).containsEntry("USD", BigDecimal.valueOf(0.90));
+        assertThat(exchangeRate.getRates()).containsEntry("USD", BigDecimal.valueOf(90, 2));
         verify(exchangeRateServiceAdapter).getLatestExchangeRates();
     }
 
@@ -114,16 +114,16 @@ class ExchangeRateFetchServiceTest {
                                 .rates(
                                         Map.of(
                                                 "INR",
-                                                BigDecimal.valueOf(80.0),
+                                                BigDecimal.valueOf(80),
                                                 "USD",
-                                                BigDecimal.valueOf(0.90)))
+                                                BigDecimal.valueOf(90, 2)))
                                 .build());
         // act
-        final var exchangeRate = exchangeRateFetchService.getAllExchangeRates(sourceCurrency);
+        final var exchangeRate = exchangeRateComputeService.getAllExchangeRates(sourceCurrency);
         // assert
         assertThat(exchangeRate.getBase()).isEqualTo(sourceCurrency);
         assertThat(exchangeRate.getRates())
-                .containsEntry("INR", BigDecimal.valueOf(88.89)); // converted value
+                .containsEntry("INR", BigDecimal.valueOf(8900,2)); // converted value
         verify(exchangeRateServiceAdapter).getLatestExchangeRates();
     }
 }

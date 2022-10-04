@@ -27,10 +27,10 @@ class ExternalExchangeRateServiceAdapterImplTest {
     @Test
     void testGetLatestExchangeRate_ReturnsMockedObject() {
         // arrange
-        final var sourceUrl = "https://api.exchangerate.host/latest";
+        final var sourceUrl = "https://api.exchangerate.host/latest?base={baseValue}&places={placeValue}";
         Map<String, String> uriVariables = new HashMap<>();
-        uriVariables.put("base", "EUR");
-        uriVariables.put("places", "2");
+        uriVariables.put("baseValue", "EUR");
+        uriVariables.put("placeValue", "4");
 
         final var sourceCurrency = "EUR";
         final var exchangeRateDto =
@@ -39,9 +39,9 @@ class ExternalExchangeRateServiceAdapterImplTest {
                         .rates(
                                 Map.of(
                                         "INR",
-                                        BigDecimal.valueOf(79.80),
+                                        BigDecimal.valueOf(7980, 2),
                                         "USD",
-                                        BigDecimal.valueOf(80.25)))
+                                        BigDecimal.valueOf(8025, 2)))
                         .build();
 
         when(restTemplate.getForObject(sourceUrl, ExchangeRateDto.class, uriVariables))
@@ -50,7 +50,7 @@ class ExternalExchangeRateServiceAdapterImplTest {
         final var exchangeRate = exchangeRateServiceAdapter.getLatestExchangeRates();
         // assert
         assertThat(exchangeRate.getBase()).isEqualTo(sourceCurrency);
-        assertThat(exchangeRate.getRates()).containsEntry("INR", BigDecimal.valueOf(79.80));
+        assertThat(exchangeRate.getRates()).containsEntry("INR", BigDecimal.valueOf(7980, 2));
         verify(restTemplate)
                 .getForObject(eq(sourceUrl), eq(ExchangeRateDto.class), eq(uriVariables));
     }
@@ -58,9 +58,9 @@ class ExternalExchangeRateServiceAdapterImplTest {
     @Test
     void testGetLatestExchange_ThrowsException_DueToServiceUnavailability() {
         // arrange
-        final var sourceUrl = "https://api.exchangerate.host/latest";
+        final var sourceUrl = "https://api.exchangerate.host/latest?base={baseValue}&places={placeValue}";
         Map<String, String> uriVariables = new HashMap<>();
-        uriVariables.put("base", "EUR");
+        uriVariables.put("baseValue", "EUR");
         when(restTemplate.getForObject(sourceUrl, ExchangeRateDto.class, uriVariables))
                 .thenThrow(
                         new ExternalServiceNotRespondingException(

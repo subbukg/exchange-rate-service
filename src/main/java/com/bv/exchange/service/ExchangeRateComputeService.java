@@ -11,7 +11,7 @@ import java.util.Map;
 
 @RequiredArgsConstructor
 @Service
-public class ExchangeRateFetchService {
+public class ExchangeRateComputeService {
     private static final String EURO_BASE_CURRENCY = "EUR";
     private static final int SCALE = 2;
     private final ExternalExchangeRateServiceAdapterImpl exchangeRateServiceAdapter;
@@ -24,12 +24,12 @@ public class ExchangeRateFetchService {
                     exchangeRateServiceAdapter.getLatestExchangeRates().getRates();
 
             if (EURO_BASE_CURRENCY.equalsIgnoreCase(source)) {
-                return exchangeRatesForEuro.get(target).setScale(SCALE, RoundingMode.HALF_UP);
+                return exchangeRatesForEuro.get(target).setScale(SCALE, RoundingMode.HALF_DOWN);
             } else {
                 final var sourceExchangeForBase = exchangeRatesForEuro.get(source);
                 final var targetExchangeForBase = exchangeRatesForEuro.get(target);
-                return targetExchangeForBase.setScale(SCALE, RoundingMode.HALF_UP).divide(
-                        sourceExchangeForBase, RoundingMode.HALF_UP);
+                return targetExchangeForBase.divide(
+                        sourceExchangeForBase, RoundingMode.HALF_DOWN).setScale(SCALE, RoundingMode.HALF_DOWN);
             }
         }
     }
@@ -55,8 +55,8 @@ public class ExchangeRateFetchService {
                                     latestExchangeRatesForEuro.get(currency);
                             exchangeRatesForSource.put(
                                     currency,
-                                    currencyExchangeForEuro.setScale(SCALE, RoundingMode.HALF_UP).divide(
-                                            sourceExchangeForEuro, RoundingMode.HALF_UP));
+                                    currencyExchangeForEuro.divide(
+                                            sourceExchangeForEuro, RoundingMode.HALF_DOWN).setScale(SCALE, RoundingMode.HALF_DOWN));
                         });
         return ExchangeRateDto.builder().base(source).rates(exchangeRatesForSource).build();
     }
