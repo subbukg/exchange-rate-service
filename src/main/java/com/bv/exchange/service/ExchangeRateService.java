@@ -18,7 +18,7 @@ import java.util.Map;
 @Service
 public class ExchangeRateService {
 
-    private final ExchangeRateFetchService exchangeRateFetchService;
+    private final ExchangeRateComputeService exchangeRateComputeService;
 
     public ExchangeRateResponse getExchangeRate(String sourceCurrency, String targetCurrency) {
         Map<String, BigDecimal> currencyExchangeRateMap = new HashMap<>();
@@ -27,7 +27,7 @@ public class ExchangeRateService {
             BigDecimal exchangeRate =
                     sourceCurrency.equalsIgnoreCase(targetCurrency)
                             ? BigDecimal.ONE
-                            : exchangeRateFetchService.getExchangeRate(
+                            : exchangeRateComputeService.getExchangeRate(
                                     sourceCurrency, targetCurrency);
 
             currencyExchangeRateMap.put(targetCurrency, exchangeRate);
@@ -35,7 +35,7 @@ public class ExchangeRateService {
         } else {
             log.info("fetching exchange rate for all currencies!");
             currencyExchangeRateMap =
-                    exchangeRateFetchService.getAllExchangeRates(sourceCurrency).getRates();
+                    exchangeRateComputeService.getAllExchangeRates(sourceCurrency).getRates();
         }
 
         return ExchangeRateResponse.builder()
@@ -53,13 +53,13 @@ public class ExchangeRateService {
                     "performing value conversion for the target currency: {}",
                     targetCurrencies.get(0));
             final var exchangeRate =
-                    exchangeRateFetchService.getExchangeRate(
+                    exchangeRateComputeService.getExchangeRate(
                             sourceCurrency, targetCurrencies.get(0));
             currencyValueMap.put(targetCurrencies.get(0), value.multiply(exchangeRate));
         } else {
             log.info("performing value conversion for a list of target currencies");
             final var sourceExchangeRate =
-                    exchangeRateFetchService.getAllExchangeRates(sourceCurrency);
+                    exchangeRateComputeService.getAllExchangeRates(sourceCurrency);
             computeCurrencyValues(value, targetCurrencies, currencyValueMap, sourceExchangeRate);
         }
 

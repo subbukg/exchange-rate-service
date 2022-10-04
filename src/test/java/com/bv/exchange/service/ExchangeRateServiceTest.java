@@ -17,7 +17,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ExchangeRateServiceTest {
-    @Mock private ExchangeRateFetchService exchangeRateFetchService;
+    @Mock private ExchangeRateComputeService exchangeRateComputeService;
     @InjectMocks private ExchangeRateService exchangeRateService;
 
     @Test
@@ -35,7 +35,7 @@ class ExchangeRateServiceTest {
                                         BigDecimal.valueOf(80.25)))
                         .build();
 
-        when(exchangeRateFetchService.getAllExchangeRates(sourceCurrency))
+        when(exchangeRateComputeService.getAllExchangeRates(sourceCurrency))
                 .thenReturn(exchangeRateDto);
         // act
         final var exchangeRate = exchangeRateService.getExchangeRate(sourceCurrency, null);
@@ -43,8 +43,8 @@ class ExchangeRateServiceTest {
         assertThat(exchangeRate.getSourceCurrency()).isEqualTo(sourceCurrency);
         assertThat(exchangeRate.getCurrencyExchangeRateMap().get("INR"))
                 .isEqualTo(BigDecimal.valueOf(79.80));
-        verify(exchangeRateFetchService).getAllExchangeRates(eq(sourceCurrency));
-        verifyNoMoreInteractions(exchangeRateFetchService);
+        verify(exchangeRateComputeService).getAllExchangeRates(eq(sourceCurrency));
+        verifyNoMoreInteractions(exchangeRateComputeService);
     }
 
     @Test
@@ -53,7 +53,7 @@ class ExchangeRateServiceTest {
         final var sourceCurrency = "EUR";
         final var targetCurrency = "USD";
 
-        when(exchangeRateFetchService.getExchangeRate(sourceCurrency, targetCurrency))
+        when(exchangeRateComputeService.getExchangeRate(sourceCurrency, targetCurrency))
                 .thenReturn(BigDecimal.valueOf(0.90));
         // act
         final var exchangeRate =
@@ -61,8 +61,8 @@ class ExchangeRateServiceTest {
         // assert
         assertThat(exchangeRate.getCurrencyExchangeRateMap())
                 .containsEntry("USD", BigDecimal.valueOf(0.90));
-        verify(exchangeRateFetchService).getExchangeRate(eq(sourceCurrency), eq(targetCurrency));
-        verifyNoMoreInteractions(exchangeRateFetchService);
+        verify(exchangeRateComputeService).getExchangeRate(eq(sourceCurrency), eq(targetCurrency));
+        verifyNoMoreInteractions(exchangeRateComputeService);
     }
 
     @Test
@@ -75,7 +75,7 @@ class ExchangeRateServiceTest {
                 exchangeRateService.getExchangeRate(sourceCurrency, targetCurrency);
         // assert
         assertThat(exchangeRate.getCurrencyExchangeRateMap()).containsEntry("EUR", BigDecimal.ONE);
-        verifyNoInteractions(exchangeRateFetchService);
+        verifyNoInteractions(exchangeRateComputeService);
     }
 
     @Test
@@ -84,7 +84,7 @@ class ExchangeRateServiceTest {
         final var sourceCurrency = "EUR";
         final var value = BigDecimal.valueOf(2000);
         final var targetCurrency = "INR";
-        when(exchangeRateFetchService.getExchangeRate(sourceCurrency, targetCurrency))
+        when(exchangeRateComputeService.getExchangeRate(sourceCurrency, targetCurrency))
                 .thenReturn(BigDecimal.valueOf(80.00));
         // act
         final var valueConversionResponse =
@@ -93,8 +93,8 @@ class ExchangeRateServiceTest {
         // assert
         assertThat(valueConversionResponse.getCurrencyValueMap())
                 .containsEntry("INR", BigDecimal.valueOf(160000.0));
-        verify(exchangeRateFetchService).getExchangeRate(eq(sourceCurrency), eq(targetCurrency));
-        verifyNoMoreInteractions(exchangeRateFetchService);
+        verify(exchangeRateComputeService).getExchangeRate(eq(sourceCurrency), eq(targetCurrency));
+        verifyNoMoreInteractions(exchangeRateComputeService);
     }
 
     @Test
@@ -104,7 +104,7 @@ class ExchangeRateServiceTest {
         final var value = BigDecimal.valueOf(2000);
         final var targetCurrencyList = List.of("INR", "USD");
 
-        when(exchangeRateFetchService.getAllExchangeRates(sourceCurrency))
+        when(exchangeRateComputeService.getAllExchangeRates(sourceCurrency))
                 .thenReturn(
                         ExchangeRateDto.builder()
                                 .rates(
@@ -121,7 +121,7 @@ class ExchangeRateServiceTest {
         assertThat(valueConversionResponse.getCurrencyValueMap())
                 .containsEntry("INR", BigDecimal.valueOf(160000.0))
                 .containsEntry("USD", BigDecimal.valueOf(1800.0));
-        verify(exchangeRateFetchService).getAllExchangeRates(eq(sourceCurrency));
-        verifyNoMoreInteractions(exchangeRateFetchService);
+        verify(exchangeRateComputeService).getAllExchangeRates(eq(sourceCurrency));
+        verifyNoMoreInteractions(exchangeRateComputeService);
     }
 }
